@@ -26,17 +26,26 @@
 
 ## Quick Start
 
+### npx (no clone needed)
+
+```sh
+# Streamable HTTP server on port 3001
+npx brick-mcp-app
+
+# Stdio transport (for Claude Desktop, etc.)
+npx brick-mcp-app --stdio
+```
+
+### From source
+
 ```sh
 git clone https://github.com/<owner>/brick-mcp-app.git
 cd brick-mcp-app
-npm install
-npm run build
-npm run serve
+npm install          # also runs `prepare` which builds the project
+npm run serve        # streamable HTTP on port 3001
 ```
 
-The server starts at **http://localhost:3001/mcp** (streamable HTTP, the default).
-
-To run over **stdio** instead (for hosts like Claude Desktop that support it natively):
+To run over **stdio** instead:
 
 ```sh
 node dist/index.js --stdio
@@ -90,8 +99,8 @@ Add to your `claude_desktop_config.json`:
 {
   "mcpServers": {
     "brick-builder": {
-      "command": "node",
-      "args": ["/absolute/path/to/brick-mcp-app/dist/index.js", "--stdio"]
+      "command": "npx",
+      "args": ["brick-mcp-app", "--stdio"]
     }
   }
 }
@@ -134,8 +143,8 @@ Or use the Command Palette: **MCP: Add Server** > **HTTP** > `http://localhost:3
   "servers": {
     "brick-builder": {
       "type": "stdio",
-      "command": "node",
-      "args": ["${workspaceFolder}/dist/index.js", "--stdio"]
+      "command": "npx",
+      "args": ["brick-mcp-app", "--stdio"]
     }
   }
 }

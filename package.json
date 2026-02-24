@@ -25,6 +25,7 @@
     "serve": "tsx --watch main.ts",
     "dev": "cross-env NODE_ENV=development concurrently \"npm run watch\" \"npm run serve\"",
     "start": "cross-env NODE_ENV=development npm run build && npm run serve",
+    "prepare": "npm run build",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
