@@ -34,7 +34,15 @@ npm run build
 npm run serve
 ```
 
-The server starts at **http://localhost:3001/mcp**.
+The server starts at **http://localhost:3001/mcp** (streamable HTTP, the default).
+
+To run over **stdio** instead (for hosts like Claude Desktop that support it natively):
+
+```sh
+node dist/index.js --stdio
+# or in dev mode:
+npx tsx main.ts --stdio
+```
 
 ### Prerequisites
 
@@ -50,6 +58,8 @@ The server starts at **http://localhost:3001/mcp**.
 | `npm run serve` | Start server in dev mode (tsx, auto-reload) |
 | `npm run dev` | Watch client + serve concurrently |
 | `npm start` | Build then serve (one command) |
+| `npx tsx main.ts --stdio` | Start server in stdio mode (dev) |
+| `node dist/index.js --stdio` | Start server in stdio mode (production) |
 
 ## Architecture
 
@@ -72,7 +82,27 @@ The server is the **single source of truth** for all scene state. Both the AI (L
 
 ### Claude Desktop
 
-Claude Desktop does not natively support streamable HTTP servers through config. You need to add the server as a **custom connector** (available on paid plans):
+#### Option A: Stdio (recommended)
+
+Add to your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "brick-builder": {
+      "command": "node",
+      "args": ["/absolute/path/to/brick-mcp-app/dist/index.js", "--stdio"]
+    }
+  }
+}
+```
+
+> [!NOTE]
+> The `--stdio` flag tells the server to communicate over stdin/stdout instead of HTTP. Claude Desktop launches and manages the process automatically — no need to start the server yourself.
+
+#### Option B: Streamable HTTP (custom connector)
+
+If you prefer to run the server separately (e.g., on a remote machine), add it as a **custom connector** (available on paid plans):
 
 1. Open Claude Desktop settings
 2. Navigate to **Connectors** and add a new custom connector
@@ -80,7 +110,9 @@ Claude Desktop does not natively support streamable HTTP servers through config.
 
 ### Visual Studio Code
 
-Visual Studio Code supports Streamable HTTP MCP servers natively. Create `.vscode/mcp.json` in your workspace:
+Visual Studio Code supports both transport modes. Create `.vscode/mcp.json` in your workspace:
+
+#### Streamable HTTP (start server yourself)
 
 ```json
 {
@@ -94,6 +126,20 @@ Visual Studio Code supports Streamable HTTP MCP servers natively. Create `.vscod
 ```
 
 Or use the Command Palette: **MCP: Add Server** > **HTTP** > `http://localhost:3001/mcp`
+
+#### Stdio (auto-launched by VS Code)
+
+```json
+{
+  "servers": {
+    "brick-builder": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["${workspaceFolder}/dist/index.js", "--stdio"]
+    }
+  }
+}
+```
 
 ## MCP Tools
 
