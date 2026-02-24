@@ -19,8 +19,8 @@ Desktop.ini
 *.log
 logs/
 
-# Build artifacts
-dist/
+# Build artifacts — dist/ is tracked so npx from git works without building
+# dist/
 build/
 out/
 *.o
